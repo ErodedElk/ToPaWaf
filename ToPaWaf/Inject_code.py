@@ -1,6 +1,17 @@
 recover_illgechar=f"""
-            push rdx
-            push rsi
+            push rbp
+            mov rbp,rsp
+            mov r9,rdi
+            xor rdi,rdi
+        save_loop:
+            cmp rdi,rdx
+            jae save_end
+            mov rax,qword ptr [rsi+rdi]
+            push rax
+            add rdi,8
+            jmp save_loop
+        save_end:
+            mov rdi,r9
             mov rax,0
             syscall
             mov rdx,rax
@@ -15,17 +26,24 @@ recover_illgechar=f"""
             cmp rax,31
             jbe erase
             jmp noop
-
         erase:
-            mov byte ptr [rsi+rdi],0
+            xor rdi,rdi
+        recover:
+            mov rax,rbp
+            sub rax,rdi
+            sub rax,8
+            mov rax,[rax]
+        
+            mov [rsi+rdi],rax
+            add rdi,8
+            jae end
+            jmp recover
         noop:
             add rdi,1
             jmp stt
-            
         end:
             mov rax,rdx
-            pop rsi
-            pop rdx
+            leave
             ret
         """
 

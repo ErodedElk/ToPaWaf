@@ -2,7 +2,8 @@ from subprocess import *
 import sys, os
 from pwn import *
 import capstone
-from ToPaWaf.Inject_code import read_hook
+# from ToPaWaf.Inject_code import read_hook
+from ToPaWaf.Inject_code import recover_illgechar as read_hook
 def round_up(value,align):
     if value%align==0:
         return value
